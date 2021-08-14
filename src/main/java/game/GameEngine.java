@@ -2,7 +2,6 @@ package game;
 
 import commands.Command;
 import players.AbstractPlayer;
-import players.CPU;
 import players.Judge;
 import players.Player;
 import state.StateMachine;
@@ -12,7 +11,6 @@ import utils.Props;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class GameEngine {
   private List<AbstractPlayer> players;
@@ -20,7 +18,6 @@ public class GameEngine {
   private GameConsole gameConsole;
   private Judge judge;
   private StateMachine stateMachine;
-  private Scanner sc;
 
   public GameEngine() throws Exception {
     this(new ArrayList<>());
@@ -51,25 +48,8 @@ public class GameEngine {
       player2.setMark(Props.readProp(Fields.P2));
       player2.injectStateMachine(this.stateMachine);
 
-      CPU cpu = new CPU();
-      cpu.setName("CPU");
-      cpu.setMark(Props.readProp(Fields.CPU));
-      cpu.injectStateMachine(this.stateMachine);
-      cpu.injectHumanPlayer(player1);
-      cpu.injectHumanPlayer(player2);
-
-      sc = new Scanner(System.in);
-      this.gameConsole.showMessage("PvP or PvE : ");
-      String input = sc.next();
-      if(input.equalsIgnoreCase("pvp")){
-        players.add(player1);
-        players.add(player2);
-      }else if(input.equalsIgnoreCase("pve")){
-        players.add(player1);
-        players.add(cpu);
-      }else {
-        return;
-      }
+      players.add(player1);
+      players.add(player2);
     } catch (Exception e) {
       throw e;
     }
@@ -89,9 +69,6 @@ public class GameEngine {
                 int x = coo[0], y = coo[1];
                 Command command = new Command(x, y, player.getMark());
                 player.execute(command);
-              } else if (player instanceof CPU) {
-                this.gameConsole.showMessage("CPU is making a move");
-                ((CPU) player).makeAMove();
               }
               this.gameBoard.draw();
 
